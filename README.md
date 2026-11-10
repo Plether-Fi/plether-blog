@@ -83,7 +83,7 @@ GitHub Pages supports public source repositories on GitHub Free; private source 
 
 ## Keystatic Cloud and Netlify setup
 
-The editor is deployed at [plether-blog-editor.netlify.app/keystatic/](https://plether-blog-editor.netlify.app/keystatic/), connected to Cloud project [`plether-blog/journal`](https://keystatic.cloud/teams/plether-blog/project/journal) and `Plether-Fi/plether-blog`. The [Netlify project](https://app.netlify.com/projects/plether-blog-editor) belongs to the Plether Blog team. Production and deploy previews remain **private to the Netlify team**, as requested. Sign in to Netlify first, then use **Log in with Keystatic Cloud** in the editor. New contributors need access to both teams; a Cloud invitation alone cannot bypass Netlify's access layer.
+The editor is deployed at [plether-blog-editor.netlify.app/keystatic/](https://plether-blog-editor.netlify.app/keystatic/), connected to Cloud project [`plether-blog/journal`](https://keystatic.cloud/teams/plether-blog/project/journal) and `Plether-Fi/plether-blog`. The [Netlify project](https://app.netlify.com/projects/plether-blog-editor) belongs to the Plether Blog team. The production editor login page is **publicly reachable**, while deploy previews remain **private to the Netlify team**. Use **Log in with Keystatic Cloud** in the editor. Writers need an invitation to the [Keystatic Cloud team](https://keystatic.cloud/teams/plether-blog/users); they do not need Netlify or GitHub accounts. Cloud authentication still controls repository editing and publishing.
 
 For recreating this setup:
 
@@ -100,6 +100,7 @@ For recreating this setup:
 
 5. Deploy and open `/keystatic/`. Verify Cloud login, banner/body uploads, saving, and logout using an invited author account. Production editor builds fail if the Cloud project identifier is missing. The fixture build uses `build-check/editor` solely to check compilation; it is not an active Cloud project.
 6. Set the Cloud project's Primary URL to the deployed editor origin, currently `https://plether-blog-editor.netlify.app`.
+   In Netlify's **Project configuration → General → Visitor access → Project visibility**, customize this project's visibility as **Private**, applying to **Previews only**. This leaves production public and deploy previews private. Keep Cloud authentication enabled in `keystatic.config.ts`.
 7. Optionally add `editor.plether.com` to Netlify and configure its DNS using Netlify's displayed target. Update `EDITOR_URL` and Cloud's allowed URL. An HTTP redirect from `https://plether.com/keystatic` must be installed on the existing main website; DNS cannot redirect a URL path. Custom domains and that redirect are not configured by this repository.
 
 For a local production editor compilation, copy `.env.editor.example` to `.env.editor` and fill in the real project identifier. Development always uses local storage; only production editor builds use Cloud. This avoids exposing unauthenticated filesystem writes in production. The editor deployment contains no public article routes, RSS, or sitemap, and emits noindex headers plus a disallow-all robots file. These indexing controls are not authentication; Cloud protects repository editing.
@@ -108,7 +109,7 @@ The Netlify ignore script skips content-only commits because the editor reads cu
 
 ## Publishing guide
 
-1. Sign in to Netlify, open the [editor](https://plether-blog-editor.netlify.app/keystatic/), sign in with Keystatic Cloud, and open **Posts → Add**.
+1. Open the [editor](https://plether-blog-editor.netlify.app/keystatic/), sign in with Keystatic Cloud, and open **Posts → Add**.
 2. Enter the title, review the generated slug, and keep **Draft** enabled.
 3. Set the author, category, publication date, excerpt, banner, and banner alt text.
 4. Write the body. Insert images using the editor's image tool and describe each image in its alt text. Use heading levels 2–4 beneath the page title.
@@ -127,7 +128,7 @@ To undo a bad publication, revert the content commit on GitHub and let Pages reb
 
 ## Deployment verification and remaining setup
 
-The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository connection, and current owner's access are configured. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional authors to both services when needed. Custom-domain DNS and the main-site redirect remain optional follow-up work.
+The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository connection, and current owner's access are configured. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. The production editor login page was verified to return HTTP 200 without Netlify cookies; deploy previews remain private. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional writers only to the Keystatic Cloud team. Custom-domain DNS and the main-site redirect remain optional follow-up work.
 
 ## References
 
