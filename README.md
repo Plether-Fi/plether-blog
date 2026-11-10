@@ -2,6 +2,8 @@
 
 An Astro blog with a file-based Keystatic editor. The public site builds to static files for **GitHub Pages**. A separate **Netlify** build serves only the editor and its API routes.
 
+Repository: [Plether-Fi/plether-blog](https://github.com/Plether-Fi/plether-blog). GitHub Pages is configured at [plether-fi.github.io/plether-blog](https://plether-fi.github.io/plether-blog/), with verified builds deployed automatically from `main`. The proposed custom domains are not connected yet.
+
 ## Local development
 
 Use Node 24 (see `.nvmrc`).
@@ -59,7 +61,7 @@ Samples carry `sample: true`. Production always excludes them unless `INCLUDE_SA
 
 ## GitHub Pages setup
 
-1. Create a dedicated GitHub repository for this project, separate from the application, and push the files to `main`. This directory had no Git repository or remote at implementation time.
+1. This project uses the dedicated `Plether-Fi/plether-blog` repository, separate from the application. Push changes to `main` to publish.
 2. In **Settings → Pages**, choose **GitHub Actions** as the source.
 3. The included `Publish blog to GitHub Pages` workflow builds and verifies the site before deploying `dist/`. It runs on pushes to `main` and can also be run manually. PRs run the separate checks workflow without deployment permissions.
 4. By default the workflow uses `https://OWNER.github.io/REPOSITORY/`. It derives both the origin and base path from the repository. Set repository Actions variables when using a custom domain:
@@ -121,7 +123,7 @@ To undo a bad publication, revert the content commit on GitHub and let Pages reb
 
 ## What requires account access
 
-The code and deployment configurations are prepared locally. Actual publication still needs the GitHub repository/Pages settings, Keystatic Cloud project and author invitations, Netlify site/environment variables, and DNS changes. Cloud authentication and the remote save-to-deploy cycle can only be verified after those services are connected.
+The GitHub repository and GitHub Pages publishing are configured. The separate editor still needs its Keystatic Cloud project and author invitations, Netlify site/environment variables, and any custom-domain DNS changes. Cloud authentication and the remote editor save-to-deploy cycle can only be verified after those services are connected.
 
 ## References
 
