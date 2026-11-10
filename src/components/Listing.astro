@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from './PostCard.astro';
+import Arrow from './Arrow.astro';
+import { paginate, type Post, type Author } from '../lib/content';
+import { type ImageManifest } from '../lib/assets';
+import { site, pathWithBase, collectionPath, type Category } from '../lib/settings';
+interface Props { posts: Post[]; authors: Author[]; images: ImageManifest; page?: number; category?: Category }
+const { posts, authors, images, page = 1, category } = Astro.props;
+const pagination = paginate(posts, page);
+const hero = !category && page === 1 && pagination.items[0]?.featured ? pagination.items[0] : undefined;
+const cards = hero ? pagination.items.slice(1) : pagination.items;
+const sample = posts.some(post => post.sample);
+const title = category ? `${category}${page > 1 ? ` — Page ${page}` : ''}` : page > 1 ? `Journal — Page ${page}` : undefined;
+---
+<Base title={title} noindex={sample}>
+  <section class="container journal-intro">
+    <div class="section-kicker"><span class="live-dot"></span> The Plether Journal <span class="intro-edition">Ideas / Perspectives / Progress</span></div>
+    <div class="intro-row"><h1>{category ? <>{category}<span class="accent-period">.</span></> : <>A clearer view<br />of the dollar<span class="accent-period">.</span></>}</h1><div class="intro-copy"><span class="intro-index">{category ? 'Explore the collection' : 'A little perspective goes a long way.'}</span><p>{category === 'Product' ? 'Inside Plether. The decisions, details, and ideas shaping what we build.' : category === 'Macro' ? 'Looking at the bigger picture behind currencies, policy, and global markets.' : category === 'Research' ? 'Going deeper into the mechanics of currencies and onchain markets.' : 'Exploring currencies, onchain markets, and the ideas moving them forward.'}</p></div></div>
+    {sample && <p class="sample-notice">Preview collection · These are sample articles. Production builds exclude them by default.</p>}
+  </section>
+  {hero && <section class="container feature-section" aria-label="Featured article"><PostCard post={hero} authors={authors} images={images} hero /></section>}
+  <section class="container articles-section" aria-labelledby="articles-heading">
+    <div class="articles-toolbar"><h2 id="articles-heading">{category ? `${category} articles` : page > 1 ? 'From the journal' : 'Latest thinking'}<span class="article-count">{String(posts.length).padStart(2, '0')}</span></h2><nav class="category-tabs" aria-label="Filter articles"><a href={pathWithBase('')} aria-current={!category ? 'page' : undefined}>All articles</a>{site.categories.map(item => <a href={pathWithBase(collectionPath(item))} aria-current={category === item ? 'page' : undefined}>{item}</a>)}</nav></div>
+    {cards.length ? <div class="post-grid">{cards.map(post => <PostCard post={post} authors={authors} images={images} />)}</div> : <div class="empty-state"><span class="section-kicker">A new perspective is on its way</span><h3>{category ? 'More to come.' : 'The conversation starts here.'}</h3><p>{category ? `Our next ${category.toLowerCase()} article will appear here.` : 'Our first articles are in the works. Follow Plether or subscribe to the RSS feed to stay close.'}</p><a class="text-link" href={category ? pathWithBase('') : 'https://x.com/plether_fi'}>{category ? 'Explore all articles' : 'Follow Plether'} <Arrow diagonal /></a></div>}
+    {pagination.total > 1 && <nav class="pagination" aria-label="Pagination">{page > 1 ? <a rel="prev" href={pathWithBase(collectionPath(category, page - 1))}>← Previous</a> : <span></span>}<span>Page {page} of {pagination.total}</span>{page < pagination.total ? <a rel="next" href={pathWithBase(collectionPath(category, page + 1))}>Next <Arrow /></a> : <span></span>}</nav>}
+  </section>
+  <aside class="container journal-note"><div class="note-symbol" aria-hidden="true">↗</div><div><span class="section-kicker">Follow the thread</span><h2>Good ideas deserve<br />a second look.</h2><p>Get every new perspective in your feed. No noise, just the journal.</p></div><a class="outline-button" href={pathWithBase('rss.xml')}>Subscribe via RSS <Arrow diagonal /></a></aside>
+</Base>

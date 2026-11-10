@@ -1,0 +1,27 @@
+---
+import { absoluteUrl, site } from '../lib/settings';
+interface Props { title?: string; description?: string; image?: string; article?: boolean; published?: string; updated?: string; noindex?: boolean }
+const { title, description = site.description, image = '/social-card.jpg', article = false, published, updated, noindex = false } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : site.name;
+const canonicalPath = Astro.url.pathname.endsWith('/404/') ? `${import.meta.env.BASE_URL}404.html` : Astro.url.pathname;
+const canonical = new URL(canonicalPath, Astro.site!);
+const imageUrl = new URL(image.startsWith('http') ? image : absoluteUrl(image, Astro.site!, import.meta.env.BASE_URL), Astro.site!).href;
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={article ? 'article' : 'website'} />
+<meta property="og:title" content={title || site.name} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title || site.name} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+{published && <meta property="article:published_time" content={published} />}
+{updated && <meta property="article:modified_time" content={updated} />}

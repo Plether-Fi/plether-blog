@@ -1,0 +1,11 @@
+---
+import Listing from '../../components/Listing.astro';
+import { loadContent, paginate } from '../../lib/content';
+import { loadImages } from '../../lib/assets';
+export async function getStaticPaths() {
+  const { posts, authors } = await loadContent();
+  const images = await loadImages();
+  return Array.from({ length: paginate(posts).total - 1 }, (_, i) => ({ params: { page: String(i + 2) }, props: { posts, authors, images, page: i + 2 } }));
+}
+---
+<Listing {...Astro.props} />

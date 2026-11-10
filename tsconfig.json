@@ -1,0 +1,6 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", "dist-editor", "node_modules", ".generated", ".netlify"],
+  "compilerOptions": { "types": ["node"], "jsx": "react-jsx", "allowImportingTsExtensions": true }
+}

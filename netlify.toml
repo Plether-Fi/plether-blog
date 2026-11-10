@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build:editor"
+  publish = "dist-editor"
+  ignore = "node scripts/netlify-ignore.mjs"
+
+[build.environment]
+  NODE_VERSION = "24"
+  # Set PUBLIC_KEYSTATIC_PROJECT=team/project in the Netlify dashboard.
+  # Set EDITOR_URL to the actual https://...netlify.app or custom editor origin.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"

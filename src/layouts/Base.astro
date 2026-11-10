@@ -1,0 +1,41 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import Arrow from '../components/Arrow.astro';
+import { pathWithBase, site } from '../lib/settings';
+interface Props { title?: string; description?: string; image?: string; article?: boolean; published?: string; updated?: string; noindex?: boolean }
+const category = Astro.url.pathname.includes('/category/') ? Astro.url.pathname.split('/category/')[1]?.split('/')[0] : '';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101b19" />
+    <Seo {...Astro.props} />
+    <link rel="icon" type="image/svg+xml" href={pathWithBase('favicon.svg')} />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href={pathWithBase('rss.xml')} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={pathWithBase('')} aria-label="Plether Journal home"><img src={pathWithBase('logotype.svg')} alt="Plether" width="112" height="29" /><span class="brand-divider"></span><span class="brand-label">Journal</span></a>
+        <nav aria-label="Main navigation">
+          <a class:list={{ active: !category }} href={pathWithBase('')} aria-current={!category ? 'page' : undefined}>Journal</a>
+          <a class:list={{ active: category === 'research' }} href={pathWithBase('category/research/')} aria-current={category === 'research' ? 'page' : undefined}>Research</a>
+          <a class="app-link" href="https://app.plether.com">Explore Plether <Arrow diagonal /></a>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-top">
+        <div><a class="footer-brand" href="https://plether.com"><img src={pathWithBase('logotype.svg')} alt="Plether" width="112" height="29" /></a><p>A different perspective.<br />A clearer view.</p></div>
+        <div class="footer-links"><a href="https://plether.com">About Plether <Arrow diagonal /></a><a href="https://x.com/plether_fi">Follow on X <Arrow diagonal /></a><a href={pathWithBase('rss.xml')}>RSS feed <Arrow diagonal /></a></div>
+      </div>
+      <div class="container footer-bottom"><span>© {new Date().getUTCFullYear()} Plether</span><span>Independent thinking. Onchain possibilities.</span><a href={pathWithBase('')}>Back to journal ↑</a></div>
+    </footer>
+  </body>
+</html>

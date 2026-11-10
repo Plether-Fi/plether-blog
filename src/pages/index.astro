@@ -1,0 +1,8 @@
+---
+import Listing from '../components/Listing.astro';
+import { loadContent } from '../lib/content';
+import { loadImages } from '../lib/assets';
+const { posts, authors } = await loadContent();
+const images = await loadImages();
+---
+<Listing posts={posts} authors={authors} images={images} />

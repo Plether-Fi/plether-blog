@@ -1,0 +1,15 @@
+---
+import Listing from '../../../components/Listing.astro';
+import { loadContent, paginate } from '../../../lib/content';
+import { loadImages } from '../../../lib/assets';
+import { site } from '../../../lib/settings';
+export async function getStaticPaths() {
+  const { posts, authors } = await loadContent();
+  const images = await loadImages();
+  return site.categories.flatMap(category => {
+    const filtered = posts.filter(post => post.category === category);
+    return Array.from({ length: paginate(filtered).total }, (_, i) => ({ params: { category: category.toLowerCase(), page: i === 0 ? undefined : `page/${i + 1}` }, props: { posts: filtered, authors, images, category, page: i + 1 } }));
+  });
+}
+---
+<Listing {...Astro.props} />
