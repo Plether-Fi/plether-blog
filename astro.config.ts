@@ -19,7 +19,7 @@ if (!['https:', 'http:'].includes(url.protocol) || url.pathname !== '/' || url.s
 process.env.INCLUDE_SAMPLE_POSTS = env.INCLUDE_SAMPLE_POSTS ?? (localEditor ? 'true' : 'false');
 process.env.PAGES_CUSTOM_DOMAIN = env.PAGES_CUSTOM_DOMAIN ?? '';
 export default defineConfig({
-  site: editor ? env.EDITOR_URL || 'https://editor.plether.com' : origin,
+  site: editor ? env.EDITOR_URL || env.URL || 'https://editor.plether.com' : origin,
   base: editor ? '/' : normalizeBase(env.BASE_PATH),
   srcDir: editor ? './editor' : './src',
   publicDir: editor ? './static' : './.generated/public',
