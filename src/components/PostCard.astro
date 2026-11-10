@@ -1,22 +1,17 @@
 ---
-import Arrow from './Arrow.astro';
-import { readingTime, type Post, type Author } from '../lib/content';
+import { type Post } from '../lib/content';
 import { imageWithBase, type ImageManifest } from '../lib/assets';
-import { formatDate, pathWithBase } from '../lib/settings';
-interface Props { post: Post; authors: Author[]; images: ImageManifest; hero?: boolean }
-const { post, authors, images, hero = false } = Astro.props;
+import { pathWithBase } from '../lib/settings';
+interface Props { post: Post; images: ImageManifest; eager?: boolean }
+const { post, images, eager = false } = Astro.props;
 const image = imageWithBase(images[post.bannerImage], import.meta.env.BASE_URL);
-const author = authors.find(author => author.slug === post.author)!;
 ---
-<article class:list={['post-card', { 'featured-card': hero }]}>
+<article class="post-card">
   <a class="post-image" href={pathWithBase(`posts/${post.slug}/`)} tabindex="-1" aria-hidden="true">
-    <img src={image.src} srcset={image.srcset} sizes={hero ? '(max-width: 760px) 100vw, 60vw' : '(max-width: 600px) 100vw, (max-width: 950px) 50vw, 33vw'} width={image.width} height={image.height} alt={post.bannerAlt} loading={hero ? 'eager' : 'lazy'} fetchpriority={hero ? 'high' : 'auto'} decoding="async" />
-    {hero && <span class="image-label"><span></span> In focus</span>}
+    <img src={image.src} srcset={image.srcset} sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1000px) 45vw, 400px" width={image.width} height={image.height} alt={post.bannerAlt} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} decoding="async" />
   </a>
   <div class="post-card-content">
-    <div class="post-eyebrow"><span class={`category-dot ${post.category.toLowerCase()}`}></span><a href={pathWithBase(`category/${post.category.toLowerCase()}/`)}>{post.category}</a><span class="eyebrow-divider">/</span><span>{readingTime(post.body)} min read</span></div>
     <h2><a href={pathWithBase(`posts/${post.slug}/`)}>{post.title}</a></h2>
     <p class="post-excerpt">{post.excerpt}</p>
-    <div class="post-card-bottom"><div><span class="author-name">{author.name}</span><time datetime={post.publishDate}>{formatDate(post.publishDate)}</time></div><a class="round-arrow" href={pathWithBase(`posts/${post.slug}/`)} aria-label={`Read ${post.title}`}><Arrow diagonal /></a></div>
   </div>
 </article>

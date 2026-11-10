@@ -1,7 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Arrow from '../../components/Arrow.astro';
-import PostCard from '../../components/PostCard.astro';
 import { loadContent, readingTime, description, socialImage, articleSchema, type Post, type Author } from '../../lib/content';
 import { loadImages, imageWithBase, type ImageManifest } from '../../lib/assets';
 import { renderBody } from '../../lib/markdoc';
@@ -9,23 +7,35 @@ import { formatDate, pathWithBase } from '../../lib/settings';
 export async function getStaticPaths() {
   const { posts, authors } = await loadContent();
   const images = await loadImages();
-  return posts.map(post => ({ params: { slug: post.slug }, props: { post, authors, images, related: posts.filter(p => p.slug !== post.slug && p.category === post.category).slice(0, 2) } }));
+  return posts.map((post, index) => ({ params: { slug: post.slug }, props: { post, authors, images, previous: posts[index - 1], next: posts[index + 1] } }));
 }
-interface Props { post: Post; authors: Author[]; images: ImageManifest; related: Post[] }
-const { post, authors, images, related } = Astro.props;
+interface Props { post: Post; authors: Author[]; images: ImageManifest; previous?: Post; next?: Post }
+const { post, authors, images, previous, next } = Astro.props;
 const author = authors.find(a => a.slug === post.author)!;
 const banner = imageWithBase(images[post.bannerImage], import.meta.env.BASE_URL);
 const share = imageWithBase(images[socialImage(post)], import.meta.env.BASE_URL).social;
-const { html, headings } = renderBody(post.body, images, import.meta.env.BASE_URL);
+const { html } = renderBody(post.body, images, import.meta.env.BASE_URL);
 const canonical = new URL(Astro.url.pathname, Astro.site!).href;
 const schema = articleSchema(post, author, canonical, new URL(share, Astro.site!).href);
 ---
 <Base title={post.seoTitle || post.title} description={description(post)} image={new URL(share, Astro.site!).href} article published={post.publishDate} updated={post.updatedDate || post.publishDate} noindex={post.sample}>
-  <article>
-    <header class="container article-header"><a class="back-link" href={pathWithBase('')}>← Back to journal</a><div class="post-eyebrow"><span class={`category-dot ${post.category.toLowerCase()}`}></span><a href={pathWithBase(`category/${post.category.toLowerCase()}/`)}>{post.category}</a><span class="eyebrow-divider">/</span><span>{readingTime(post.body)} min read</span>{post.sample && <span class="sample-label">Sample article</span>}</div><h1>{post.title}</h1><p class="article-deck">{post.excerpt}</p><div class="article-meta"><div class="author-avatar" aria-hidden="true">{author.name.split(' ').map(s => s[0]).slice(0, 2).join('')}</div><div><span class="author-name">{author.name}</span><span class="author-role">{author.role}</span></div><div class="article-dates"><time datetime={post.publishDate}>{formatDate(post.publishDate)}</time>{post.updatedDate && <span>Updated <time datetime={post.updatedDate}>{formatDate(post.updatedDate)}</time></span>}</div><a class="share-link" href={`https://x.com/intent/post?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(canonical)}`} target="_blank" rel="noopener noreferrer">Share on X <Arrow diagonal /></a></div></header>
-    <div class="container article-banner"><img src={banner.src} srcset={banner.srcset} sizes="(max-width: 1280px) 100vw, 1200px" width={banner.width} height={banner.height} alt={post.bannerAlt} fetchpriority="high" /></div>
-    <div class="container article-layout">{headings.length > 0 && <aside class="article-toc"><span class="section-kicker">On this page</span><nav aria-label="Table of contents">{headings.map(h => <a href={`#${h.id}`} class:list={{ 'toc-sub': h.level === 3 }}>{h.title}</a>)}</nav></aside>}<div class="article-body-column"><div class="prose" set:html={html}></div><div class="author-bio"><div class="author-avatar" aria-hidden="true">{author.name.split(' ').map(s => s[0]).slice(0, 2).join('')}</div><div><span class="section-kicker">Written by</span><h2>{author.name}</h2><p>{author.bio || author.role}</p></div></div><a class="text-link" href={pathWithBase('')}>More from the journal <Arrow /></a></div></div>
+  <article class="article-page">
+    <div class="article-banner"><img src={banner.src} srcset={banner.srcset} sizes="(max-width: 1020px) calc(100vw - 40px), 980px" width={banner.width} height={banner.height} alt={post.bannerAlt} fetchpriority="high" /></div>
+    <header class="article-header reading-column">
+      <h1>{post.title}</h1>
+      <div class="article-meta">
+        <p><time datetime={post.publishDate}>{formatDate(post.publishDate)}</time><span class="reading-time"> · {readingTime(post.body)} min read</span></p>
+        <p class="article-byline">Written by {author.name}{author.role && `, ${author.role}`}</p>
+        {post.updatedDate && <p>Updated <time datetime={post.updatedDate}>{formatDate(post.updatedDate)}</time></p>}
+      </div>
+      {post.sample && <p class="sample-notice">Sample article · Not published on the live blog.</p>}
+    </header>
+    <div class="reading-column article-body"><div class="prose" set:html={html}></div></div>
+    <nav class="article-pagination" aria-label="Article navigation">
+      {previous ? <a rel="prev" href={pathWithBase(`posts/${previous.slug}/`)} aria-label={`Previous article: ${previous.title}`}>Previous</a> : <span aria-disabled="true">Previous</span>}
+      <a class="square-divider" href={pathWithBase('')} aria-label="All articles"></a>
+      {next ? <a rel="next" href={pathWithBase(`posts/${next.slug}/`)} aria-label={`Next article: ${next.title}`}>Next</a> : <span aria-disabled="true">Next</span>}
+    </nav>
   </article>
-  {related.length > 0 && <section class="container related-section" aria-labelledby="related-heading"><div class="articles-toolbar"><h2 id="related-heading">Another perspective</h2><a class="text-link" href={pathWithBase(`category/${post.category.toLowerCase()}/`)}>More {post.category.toLowerCase()} <Arrow /></a></div><div class="post-grid related-grid">{related.map(p => <PostCard post={p} authors={authors} images={images} />)}</div></section>}
   <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')}></script>
 </Base>

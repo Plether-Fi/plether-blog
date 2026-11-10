@@ -33,8 +33,8 @@ test('featured ordering is deterministic and pagination does not drop posts', ()
   const sorted = sortPosts(posts);
   assert.equal(sorted[0].slug, 'post-1');
   assert.equal(sorted[1].slug, 'post-13');
-  assert.equal(paginate(sorted).total, 3);
-  const pages = [1, 2, 3].flatMap(page => paginate(sorted, page).items);
+  assert.equal(paginate(sorted).total, 2);
+  const pages = [1, 2].flatMap(page => paginate(sorted, page).items);
   assert.equal(new Set(pages.map(p => p.slug)).size, 14);
   assert.equal(collectionPath('Research', 2), 'category/research/page/2/');
 });
@@ -63,7 +63,7 @@ test('fixture files round-trip through the Keystatic Reader and public parser', 
   const root = new URL('./fixtures', import.meta.url).pathname;
   const reader = createReader(root, config);
   const { allPosts, posts } = await loadContent(root, true);
-  assert.equal(posts.length, 7);
+  assert.equal(posts.length, 10);
   const entry = await reader.collections.posts.read('fixture-1');
   assert.ok(entry);
   assert.equal(entry.title, allPosts.find(p => p.slug === 'fixture-1')!.title);

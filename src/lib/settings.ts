@@ -2,7 +2,7 @@ export const site = {
   name: 'Plether Journal',
   description: 'Perspectives on the dollar, onchain markets, and the ideas behind Plether.',
   categories: ['Product', 'Macro', 'Research'] as const,
-  pageSize: 6,
+  pageSize: 9,
 };
 
 export type Category = (typeof site.categories)[number];
@@ -22,7 +22,7 @@ export function absoluteUrl(path: string, origin: string | URL, base = '/') {
 }
 
 export function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+  return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
     .format(new Date(`${value}T00:00:00Z`));
 }
 

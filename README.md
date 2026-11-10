@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:4321`. Local development includes seven clearly marked sample articles. Production builds exclude them automatically and show an empty state until you publish a real article. You can delete the sample posts and their images without breaking the tests, which use independent fixtures.
+Open `http://127.0.0.1:4321`. Local development includes nine clearly marked sample articles. Production builds exclude them automatically and show an empty state until you publish a real article. You can delete the sample posts and their images without breaking the tests, which use independent fixtures.
 
 Run the local file editor separately:
 
@@ -136,4 +136,6 @@ The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository c
 - [Astro on GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)
 - [Astro on Netlify](https://docs.astro.build/en/guides/integrations-guide/netlify/)
 
-Plether logos are reused from the neighboring Plether app. Sample illustrations and copy were created for this project; the demo blog's code was not copied.
+The public templates follow the PLETHER Figma file's [Main Page Blog](https://www.figma.com/design/5Suf3OWzHU3pcqVrhqat89/PLETHER?node-id=2932-4978) and [Article Page](https://www.figma.com/design/5Suf3OWzHU3pcqVrhqat89/PLETHER?node-id=2932-5249). The index uses nine cards per page; featured posts sort first. Categories and RSS remain available below the grid. Articles use a banner-first layout and previous/next links through the published collection. Mobile layouts adapt the desktop frames to narrow screens.
+
+The header/footer logos, header rule, and three sample banner images are original Figma exports saved locally. Real article imagery always comes from each post's uploaded banner. Sample content remains excluded from production. Uncut Sans and Instrument Sans are self-hosted; their original licenses are included under `static/fonts/`. The demo blog's code was not copied.
