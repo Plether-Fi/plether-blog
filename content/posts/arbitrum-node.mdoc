@@ -1,0 +1,43 @@
+---
+title: Plether now runs its own Arbitrum node
+draft: true
+publishDate: 2026-11-16
+author: plether
+category: Product
+featured: false
+bannerImage: /images/posts/arbitrum-node/bannerImage.png
+bannerAlt: Your trades now execute in 3.2 seconds
+excerpt: >-
+  Trades on Plether now execute in 3.2 seconds on average, down from 15. Here is
+  how running our own Arbitrum node made that possible.
+sample: false
+---
+Trades on Plether now execute in 3.2 seconds on average, down from around 15. We got there by moving off a third-party provider and onto an Arbitrum node we operate ourselves, which also means the app no longer depends on a single provider to reach the chain. This post explains what we changed and what it means when you trade.
+
+### **What changed**
+
+Every app built on a blockchain needs a way to read from the chain and send transactions to it. That connection is called an RPC (remote procedure call) interface, and most teams rent it from a provider. Until now, Plether used Alchemy for this. That worked well, but it meant every request made an extra stop on the way.
+
+We have replaced that setup with a node we operate ourselves, running on Amazon Web Services. The Plether app now talks directly to our own Arbitrum node, and that node verifies every transaction itself instead of relying on a third party to do it for us.
+
+### **What it means when you trade**
+
+- **Your trades execute faster.** The time between you signing a transaction and that transaction executing used to be around 15 seconds. It is now 3.2 seconds on average.
+- **The app talks to the chain faster.** Latency used to be in the hundreds of milliseconds. It is now in the single digits.
+- **Data refreshes more often.** We can index the chain at intervals up to five times shorter, so what you see on screen is closer to what is happening onchain.
+
+### **Alchemy stays as a backup**
+
+We have kept Alchemy as a second connection. If our node ever has a problem, the app switches over to Alchemy, so an issue on one side is much less likely to interrupt your trading.
+
+### **How we made it possible**
+
+We received AWS credits through the AWS for Startups programme. Thank you to Softstack for vouching for us, to the DeFi Founders Club for connecting us, and to Amazon for offering us the world's best web infrastructure.
+
+### **See the difference for yourself**
+
+If you want to see the difference, open a position on the Plether testnet app and watch how quickly it executes.\
+
+[Open Plether](https://plether.com)\
+
+*Plether lets you trade US dollar index perpetuals onchain. It is built on Arbitrum. You can read how the protocol works in the[ docs](https://docs.plether.com).*
