@@ -2,7 +2,7 @@
 
 An Astro blog with a file-based Keystatic editor. The public site builds to static files for **GitHub Pages**. A separate **Netlify** build serves only the editor and its API routes.
 
-Repository: [Plether-Fi/plether-blog](https://github.com/Plether-Fi/plether-blog). GitHub Pages is configured at [plether-fi.github.io/plether-blog](https://plether-fi.github.io/plether-blog/), with verified builds deployed automatically from `main`. The proposed custom domains are not connected yet.
+Repository: [Plether-Fi/plether-blog](https://github.com/Plether-Fi/plether-blog). Verified builds deploy automatically from `main` to [GitHub Pages](https://plether-fi.github.io/plether-blog/). The prepared integration will serve the blog at [plether.com/blog/](https://plether.com/blog/) once the Cloudflare route and build URL settings below are activated.
 
 ## Local development
 
@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:4321`. Local development includes nine clearly marked sample articles. Production builds exclude them automatically and show an empty state until you publish a real article. You can delete the sample posts and their images without breaking the tests, which use independent fixtures.
+Open `http://127.0.0.1:4321`. Local development includes any remaining sample articles. Production excludes articles marked as samples automatically. You can delete sample posts and their images without breaking the tests, which use independent fixtures.
 
 Run the local file editor separately:
 
@@ -64,20 +64,32 @@ Samples carry `sample: true`. Production always excludes them unless `INCLUDE_SA
 1. This project uses the dedicated `Plether-Fi/plether-blog` repository, separate from the application. Push changes to `main` to publish.
 2. In **Settings → Pages**, choose **GitHub Actions** as the source.
 3. The included `Publish blog to GitHub Pages` workflow builds and verifies the site before deploying `dist/`. It runs on pushes to `main` and can also be run manually. PRs run the separate checks workflow without deployment permissions.
-4. By default the workflow uses `https://OWNER.github.io/REPOSITORY/`. It derives both the origin and base path from the repository. Set repository Actions variables when using a custom domain:
+4. When activating `/blog/`, set these repository Actions variables to configure the public URL independently of the GitHub Pages origin. Until activation, leave them unset to keep the existing Pages URL working:
 
-   | Variable | Value for the proposed custom domain |
+   | Variable | Value for `/blog/` |
    | --- | --- |
-   | `SITE_URL` | `https://blog.plether.com` |
-   | `BASE_PATH` | `/` |
-   | `PAGES_CUSTOM_DOMAIN` | `blog.plether.com` |
+   | `SITE_URL` | `https://plether.com` |
+   | `BASE_PATH` | `/blog` |
+   | `PAGES_CUSTOM_DOMAIN` | Unset |
 
-   For an `OWNER.github.io` repository, also set `BASE_PATH=/`. `SITE_URL` must be an origin without a path; the repository path belongs in `BASE_PATH`.
+   `SITE_URL` must be an origin without a path; the public path belongs in `BASE_PATH`. Without these variables the workflow falls back to `https://OWNER.github.io/REPOSITORY/`.
 
-5. For the custom domain, add `blog.plether.com` in Pages settings, point the `blog` DNS CNAME to `OWNER.github.io`, verify domain ownership as requested by GitHub, and enable HTTPS after certificate provisioning. Keep the existing apex website's DNS in place.
+5. Leave GitHub Pages' custom domain empty: `plether.com` belongs to the existing landing site. The prepared Cloudflare Worker `plether-blog-proxy` routes `plether.com/blog*`, handles only `/blog` and `/blog/…`, and fetches the corresponding files from `https://plether-fi.github.io/plether-blog/`. Other matching paths pass through to the main website. Existing DNS remains in place. `/blog` redirects to `/blog/`; upstream redirects retain the public URL, and missing articles retain their 404 status. Main-site cookies and authorization headers are never forwarded to GitHub.
 6. Publish a real test article through Cloud and confirm that its commit triggers the Pages workflow. Build time depends on the queue and content size; measure the actual save-to-live time during onboarding.
 
 For equivalent local builds, copy `.env.example` to `.env` and set the same values. `.env` files are ignored. No API token belongs in the public build.
+
+Worker source and deployment configuration are in `cloudflare/`. To deploy manually without authorizing a CLI:
+
+1. In Cloudflare **Workers & Pages → Create application → Start with Hello World**, create `plether-blog-proxy`. Do not attach a route to the placeholder.
+2. Open **Edit code**, replace the entire starter script with [`cloudflare/blog-proxy.mjs`](cloudflare/blog-proxy.mjs), and **Deploy**.
+3. In the Worker's **Settings → Domains & Routes → Add → Route**, select zone `plether.com` and pattern `plether.com/blog*`. If shown, choose **Fail closed** so a proxy failure cannot accidentally serve the landing page as a blog article.
+4. Activate the two Actions variables above, then run **Publish blog to GitHub Pages** on `main`. The new public path requires this rebuild; the route alone does not change the generated links or assets.
+5. Verify the index, an article, its banner, RSS, sitemap, `/blog` redirect, and a missing-article 404 at `https://plether.com/blog/`. Confirm the main homepage still works.
+
+For later CLI deployments, an authorized operator can run `npx wrangler deploy --config cloudflare/wrangler.jsonc`. Regular article saves only rebuild GitHub Pages; they do not require redeploying the Worker. HTML caching is limited to 60 seconds at the proxy. The GitHub Pages address remains the upstream origin; after activation, share the public `/blog/` URL with readers.
+
+To remove this integration, remove the `plether.com/blog*` Worker route and restore or delete the two Actions variables before rebuilding for the GitHub Pages address. Disabling the route restores the landing site's handling of `/blog`; no DNS changes are needed. The Netlify editor URL and Keystatic Cloud project do not change.
 
 GitHub Pages supports public source repositories on GitHub Free; private source requires an eligible GitHub plan. A public source repository exposes drafts through GitHub even though the generated website excludes them. See [GitHub Pages availability](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
 
@@ -128,7 +140,7 @@ To undo a bad publication, revert the content commit on GitHub and let Pages reb
 
 ## Deployment verification and remaining setup
 
-The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository connection, and current owner's access are configured. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. The production editor login page was verified to return HTTP 200 without Netlify cookies; deploy previews remain private. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional writers only to the Keystatic Cloud team. Custom-domain DNS and the main-site redirect remain optional follow-up work.
+The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository connection, and current owner's access are configured. `/blog/` proxy code and checks are prepared; manual Cloudflare deployment and activation of the build URL settings remain pending. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. The production editor login page was verified to return HTTP 200 without Netlify cookies; deploy previews remain private. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional writers only to the Keystatic Cloud team. A custom editor domain or main-site editor redirect remains optional follow-up work.
 
 ## References
 

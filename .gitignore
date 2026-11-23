@@ -4,6 +4,7 @@ node_modules/
 dist/
 dist-editor/
 .netlify/
+.wrangler/
 .env
 .env.*
 !.env.example
