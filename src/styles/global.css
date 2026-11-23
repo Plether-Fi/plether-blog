@@ -38,11 +38,9 @@
   .main-nav .app-link:hover { background: var(--text); }
   .header-rule { position: absolute; bottom: 0; height: 1px; width: 100%; overflow: hidden; }
   .header-rule img { max-width: none; position: absolute; left: 50%; transform: translateX(-50%); }
-  .blog-intro { position: relative; padding-block: 130px 100px; text-align: center; }
-  .blog-intro h1 { max-width: 873px; margin-inline: auto; font-size: 64px; line-height: 1.05; font-weight: 700; letter-spacing: -.025em; }
   .sample-notice { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .blog-intro .sample-notice { position: absolute; bottom: 45px; left: 0; right: 0; }
-  .articles-section { padding-bottom: 110px; }
+  .articles-section { padding-block: 92px 110px; }
+  .articles-section > .sample-notice { margin-bottom: 28px; text-align: center; }
   .post-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 70px 50px; }
   .post-card { min-width: 0; text-align: center; }
   .post-image { display: block; border-radius: 12px; overflow: hidden; background: var(--text); }
@@ -51,9 +49,6 @@
   .post-card-content { padding-top: 30px; }
   .post-card h2 { font-size: 28px; line-height: 34.4px; font-weight: 500; letter-spacing: -.02em; }
   .post-excerpt { margin-top: 11px; color: var(--muted); font-size: 20px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .category-tabs { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 68px; font-size: 14px; text-transform: uppercase; color: var(--muted); }
-  .category-tabs .square-divider { width: 5px; height: 5px; flex-basis: 5px; }
-  .category-tabs [aria-current] { color: var(--text); text-decoration: underline; text-underline-offset: 5px; }
   .pagination { display: flex; justify-content: center; align-items: center; gap: 45px; padding-top: 35px; font-size: 18px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
   .page-count { font-size: 14px; letter-spacing: 0; text-transform: none; }
   [aria-disabled] { color: var(--subtle); }
@@ -119,7 +114,6 @@
 }
 @media (max-width: 1000px) {
   .post-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .blog-intro h1 { font-size: 56px; }
   .main-nav { gap: 20px; font-size: 15px; }
   .main-nav .app-link { min-width: 140px; }
   .article-header h1 { font-size: 42px; }
@@ -134,15 +128,10 @@
   .main-nav > a:not(.app-link) { padding-block: 10px; }
   .main-nav .square-divider { width: 6px; height: 6px; flex-basis: 6px; }
   .main-nav .app-link { min-width: 115px; min-height: 38px; }
-  .blog-intro { padding-block: 70px 65px; }
-  .blog-intro h1 { font-size: 42px; line-height: 1.08; }
-  .blog-intro h1 br { display: none; }
-  .blog-intro .sample-notice { position: static; margin-top: 25px; }
   .post-card h2 { font-size: 26px; line-height: 1.2; }
   .post-card-content { padding-top: 22px; }
   .post-excerpt { font-size: 18px; }
-  .category-tabs { gap: 13px; font-size: 12px; margin-top: 50px; }
-  .articles-section { padding-bottom: 70px; }
+  .articles-section { padding-block: 45px 70px; }
   .pagination { gap: 24px; font-size: 14px; letter-spacing: .05em; }
   .page-count { font-size: 12px; }
   .footer-inner { padding-block: 40px 30px; }
