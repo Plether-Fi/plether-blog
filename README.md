@@ -2,7 +2,7 @@
 
 An Astro blog with a file-based Keystatic editor. The public site builds to static files for **GitHub Pages**. A separate **Netlify** build serves only the editor and its API routes.
 
-Repository: [Plether-Fi/plether-blog](https://github.com/Plether-Fi/plether-blog). GitHub Pages is configured at [plether-fi.github.io/plether-blog](https://plether-fi.github.io/plether-blog/), with verified builds deployed automatically from `main`. The proposed custom domains are not connected yet.
+Repository: [Plether-Fi/plether-blog](https://github.com/Plether-Fi/plether-blog). The public blog is served directly by GitHub Pages at [blog.plether.com](https://blog.plether.com/), with verified builds deployed automatically from `main`. The main website's `/blog` shortcut redirects to this address.
 
 ## Local development
 
@@ -66,7 +66,7 @@ Samples carry `sample: true`. Production always excludes them unless `INCLUDE_SA
 3. The included `Publish blog to GitHub Pages` workflow builds and verifies the site before deploying `dist/`. It runs on pushes to `main` and can also be run manually. PRs run the separate checks workflow without deployment permissions.
 4. By default the workflow uses `https://OWNER.github.io/REPOSITORY/`. It derives both the origin and base path from the repository. Set repository Actions variables when using a custom domain:
 
-   | Variable | Value for the proposed custom domain |
+   | Variable | Current production value |
    | --- | --- |
    | `SITE_URL` | `https://blog.plether.com` |
    | `BASE_PATH` | `/` |
@@ -74,7 +74,7 @@ Samples carry `sample: true`. Production always excludes them unless `INCLUDE_SA
 
    For an `OWNER.github.io` repository, also set `BASE_PATH=/`. `SITE_URL` must be an origin without a path; the repository path belongs in `BASE_PATH`.
 
-5. For the custom domain, add `blog.plether.com` in Pages settings, point the `blog` DNS CNAME to `OWNER.github.io`, verify domain ownership as requested by GitHub, and enable HTTPS after certificate provisioning. Keep the existing apex website's DNS in place.
+5. GitHub Pages' custom domain is `blog.plether.com`. In Cloudflare, the `blog` CNAME points to `plether-fi.github.io`, with **DNS only** proxy status and automatic TTL. GitHub provisions the certificate and enforces HTTPS. Keep the existing apex website's DNS in place.
 6. Publish a real test article through Cloud and confirm that its commit triggers the Pages workflow. Build time depends on the queue and content size; measure the actual save-to-live time during onboarding.
 
 For equivalent local builds, copy `.env.example` to `.env` and set the same values. `.env` files are ignored. No API token belongs in the public build.
@@ -83,7 +83,7 @@ GitHub Pages supports public source repositories on GitHub Free; private source 
 
 ## Main-site blog redirect
 
-The requested integration is a browser redirect from `https://plether.com/blog` (and `/blog/`) to the existing GitHub Pages blog. It does not move the blog or change its build URLs. No Worker, new application, or DNS change is needed; the main hostname is already proxied by Cloudflare.
+The main website provides a browser redirect from `https://plether.com/blog` (and `/blog/`) to `https://blog.plether.com/`. The subdomain serves the blog directly from GitHub Pages; no Worker or separate proxy application is involved. The main hostname remains proxied by Cloudflare for this redirect.
 
 In Cloudflare, select `plether.com`, open **Rules → Overview → Create rule → Redirect Rule**, and choose **Custom filter expression**:
 
@@ -91,7 +91,7 @@ In Cloudflare, select `plether.com`, open **Rules → Overview → Create rule �
 (http.host eq "plether.com" and http.request.uri.path in {"/blog" "/blog/"})
 ```
 
-Set the redirect type to **Static**, target URL to `https://plether-fi.github.io/plether-blog/`, status to **301**, and enable **Preserve query string**. Deploy the rule. Keep GitHub Pages' custom domain and repository URL variables unset. This rule only matches the two blog entry paths; article links continue to use their existing GitHub Pages URLs. The **Blog** redirect rule is enabled in Cloudflare. On November 23, 2026, live checks confirmed 301 responses for both paths, query-string preservation, and an unchanged 200 response from the main homepage.
+Set the redirect type to **Static**, target URL to `https://blog.plether.com/`, status to **301**, and enable **Preserve query string**. The **Blog** rule is enabled in Cloudflare. It only matches the two blog entry paths; article links use the blog subdomain. Previously shared GitHub Pages links redirect automatically to the configured custom domain.
 
 ## Keystatic Cloud and Netlify setup
 
@@ -140,7 +140,7 @@ To undo a bad publication, revert the content commit on GitHub and let Pages reb
 
 ## Deployment verification and remaining setup
 
-The GitHub repository, GitHub Pages workflow, Netlify editor, Cloud repository connection, and current owner's access are configured. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. The production editor login page was verified to return HTTP 200 without Netlify cookies; deploy previews remain private. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional writers only to the Keystatic Cloud team. Custom-domain DNS and the main-site redirect remain optional follow-up work.
+The GitHub repository, GitHub Pages workflow and public custom domain, main-site blog redirect, Netlify editor, Cloud repository connection, and current owner's access are configured. Cloud login and saving a temporary draft to `main` were verified through the deployed editor. The draft triggered the Pages workflow while remaining excluded from public output. The production editor login page was verified to return HTTP 200 without Netlify cookies; deploy previews remain private. Automated remote image-upload verification was blocked by the browser extension's local-file access setting; image controls are enabled, and local uploads were verified during implementation. Invite additional writers only to the Keystatic Cloud team. A custom editor domain and main-site editor redirect remain optional follow-up work.
 
 ## References
 
