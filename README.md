@@ -91,7 +91,7 @@ In Cloudflare, select `plether.com`, open **Rules → Overview → Create rule �
 (http.host eq "plether.com" and http.request.uri.path in {"/blog" "/blog/"})
 ```
 
-Set the redirect type to **Static**, target URL to `https://plether-fi.github.io/plether-blog/`, status to **301**, and enable **Preserve query string**. Deploy the rule. Keep GitHub Pages' custom domain and repository URL variables unset. This rule only matches the two blog entry paths; article links continue to use their existing GitHub Pages URLs. The manual redirect rule is pending deployment by the site owner.
+Set the redirect type to **Static**, target URL to `https://plether-fi.github.io/plether-blog/`, status to **301**, and enable **Preserve query string**. Deploy the rule. Keep GitHub Pages' custom domain and repository URL variables unset. This rule only matches the two blog entry paths; article links continue to use their existing GitHub Pages URLs. The **Blog** redirect rule is enabled in Cloudflare. On November 23, 2026, live checks confirmed 301 responses for both paths, query-string preservation, and an unchanged 200 response from the main homepage.
 
 ## Keystatic Cloud and Netlify setup
 
