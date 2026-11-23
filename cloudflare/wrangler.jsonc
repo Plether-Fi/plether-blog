@@ -1,9 +1,0 @@
-{
-  "name": "plether-blog-proxy",
-  "account_id": "1e64ddc65bbd93cb18ceb9066dcb8a68",
-  "main": "blog-proxy.mjs",
-  "compatibility_date": "2026-11-23",
-  "workers_dev": false,
-  "preview_urls": false,
-  "routes": [{ "pattern": "plether.com/blog*", "zone_name": "plether.com" }]
-}

@@ -38,12 +38,7 @@ export async function verifyPublicBuild() {
       if (!value || value.startsWith('#') || /^(mailto:|tel:|data:)/.test(value)) continue;
       const url = new URL(value, canonical);
       if (url.origin !== origin) continue;
-      // The main website shares our origin when the blog lives under /blog/.
-      // Explicit absolute links may leave the blog; generated local links may not.
-      if (!url.pathname.startsWith(base)) {
-        assert.ok(/^https?:\/\//.test(value), `${file}: missing base path in ${value}`);
-        continue;
-      }
+      assert.ok(url.pathname.startsWith(base), `${file}: missing base path in ${value}`);
       const relative = decodeURIComponent(url.pathname.slice(base.length));
       const destination = path.join('dist', relative.endsWith('/') || relative === '' ? `${relative}index.html` : relative);
       assert.ok((await stat(destination).catch(() => null))?.isFile(), `${file}: broken local URL ${value}`);
