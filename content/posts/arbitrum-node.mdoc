@@ -20,23 +20,23 @@ Every app built on a blockchain needs a way to read from the chain and send tran
 
 We have replaced that setup with a node we operate ourselves, running on Amazon Web Services. The Plether app now talks directly to our own Arbitrum node, and that node verifies every transaction itself instead of relying on a third party to do it for us.
 
-### What it means when you trade\
+### What it means when you trade
 
 - **Your trades execute faster.** The time between you signing a transaction and that transaction executing used to be around 15 seconds. It is now 3.2 seconds on average.
 - **The app talks to the chain faster.** Latency used to be in the hundreds of milliseconds. It is now in the single digits.
 - **Data refreshes more often.** We can index the chain at intervals up to five times shorter, so what you see on screen is closer to what is happening onchain.
 
-### Alchemy stays as a backup**
+### Alchemy stays as a backup
 
 We have kept Alchemy as a second connection. If our node ever has a problem, the app switches over to Alchemy, so an issue on one side is much less likely to interrupt your trading.
 
-### How we made it possible**
+### How we made it possible
 
 We received AWS credits through the AWS for Startups programme. Thank you to Softstack for vouching for us, to the DeFi Founders Club for connecting us, and to Amazon for offering us the world's best web infrastructure.
 
-### See the difference for yourself\
+### See the difference for yourself
 
-If you want to see the difference, open a position on the Plether testnet app and watch how quickly it executes.\
+If you want to see the difference, open a position on the Plether testnet app and watch how quickly it executes.
 
 [Open Plether](https://plether.com)
 
